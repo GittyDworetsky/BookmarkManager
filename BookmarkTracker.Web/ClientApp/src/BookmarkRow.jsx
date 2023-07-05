@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
+
 
 const BookmarkRow = (props) => {
-    const { bookmark, bookmarkName, onEditClick, onUpdateClick, onCancelClick, onDeleteClick, editMode, onTextChange } = props;
+
+    const { bookmark, onUpdateClick, onDeleteClick } = props;
+    const [editMode, setEditMode] = useState(false);
+    const [bookmarkTitle, setBookmarkTitle] = useState(bookmark.title);
+
+    const onTextChange = (e) => {
+        setBookmarkTitle(e.target.value);
+    }
+
+    const onEditClick = (id) => {
+        setEditMode(true);
+    }
+
+    const onCancelClick = () => {
+        setBookmarkTitle(bookmark.title);
+        setEditMode(false);
+    }
+
+    const myUpdateClick = () => {
+        onUpdateClick(bookmarkTitle)
+        setEditMode(false);
+    }
+
     return (
         <tr key={bookmark.id}>
-            <td>{!editMode ? bookmark.title : <input type="text" value={bookmarkName} onChange={onTextChange} />}</td>
+            <td>{!editMode ? bookmark.title : <input type="text" value={bookmarkTitle} onChange={onTextChange} />}</td>
             <td>
                 <a href={bookmark.url} target="_blank">
                     {bookmark.url}
@@ -17,7 +40,7 @@ const BookmarkRow = (props) => {
                     </button>
                 ) : (
                     <>
-                        <button onClick={onUpdateClick} className="btn btn-warning">Update</button>
+                        <button onClick={myUpdateClick} className="btn btn-warning">Update</button>
                         <button onClick={onCancelClick} className="btn btn-info">Cancel</button>
                     </>
                 )}

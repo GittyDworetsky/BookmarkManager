@@ -8,8 +8,6 @@ import BookmarkRow from "./BookmarkRow";
 const MyBookmarks = () => {
 
     const [myBookmarks, setMyBookmarks] = useState([]);
-    const [inEditIds, setInEditIds] = useState([]);
-    const [bookmarkName, setBookmarkName] = useState();
     const { user } = useAuth();
 
     const getMyBookmarks = async () => {
@@ -24,31 +22,14 @@ const MyBookmarks = () => {
 
     }, []);
 
-    const onTextChange = (e) => {
-        setBookmarkName(e.target.value);
-    }
 
-    const onEditClick = (id) => {
+    const onUpdateClick = async (bookmarkTitle, id) => {
 
-        setInEditIds([...inEditIds, id]);
-    }
-
-    const onUpdateClick = async (id) => {
-
-        await axios.post('/api/user/updatebookmarktitle', { title: bookmarkName, id });
+        await axios.post('/api/user/updatebookmarktitle', { title: bookmarkTitle, id });
         getMyBookmarks();
-        const copy = inEditIds.filter(i => i !== id);
-        setInEditIds(copy);       
-        setBookmarkName('');
 
     }
 
-    const onCancelClick = (id) => {
-
-        const copy = inEditIds.filter(i => i !== id);
-        setInEditIds(copy); 
-        setBookmarkName('');
-    }
 
     const onDeleteClick = async (id) => {
         await axios.post('/api/user/deletebookmark', {id} );
@@ -80,13 +61,8 @@ const MyBookmarks = () => {
                                 <BookmarkRow
                                     key={b.id}
                                     bookmark={b}
-                                    bookmarkName={bookmarkName}
-                                    editMode={inEditIds.includes(b.id)}
-                                    onEditClick={() => onEditClick(b.id)}
-                                    onCancelClick={() => onCancelClick(b.id)}
-                                    onUpdateClick={() => onUpdateClick(b.id)}
+                                    onUpdateClick={(bookmarkTitle) => onUpdateClick(bookmarkTitle, b.id)}
                                     onDeleteClick={() => onDeleteClick(b.id)}
-                                    onTextChange={onTextChange}
                                 />
                             )}
                     </tbody>
