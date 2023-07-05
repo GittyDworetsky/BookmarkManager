@@ -12,5 +12,7 @@ namespace BookmarkTracker.Data
         public string Title { get; set; }
         public string Url { get; set; }
         public int UserId { get; set; }
+
+        public int? BookmarkCount { get; set; }
     }
 }

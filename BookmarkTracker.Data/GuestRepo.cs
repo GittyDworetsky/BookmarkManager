@@ -23,15 +23,19 @@ namespace BookmarkTracker.Data
             using var context = new BookmarkTrackerDataContext(_connectionString);
             if (context.Bookmarks != null)
             {
-                var bookmarks = context.Bookmarks.GroupBy(b => b.Url)
-                .OrderByDescending(b => b.Count()).Take(5)
-                .Select(i => new BookmarkCount
+                var bookmarks = context.Bookmarks.FromSqlRaw("SELECT TOP 5 Url, COUNT(*) as bookmarkCount FROM bookmarks " +
+                                                 "GROUP BY Url " +
+                                                 "ORDER BY bookmarkCount DESC" 
+                                                 )
+                                     
+                .Select(b => new BookmarkCount
                 {
-                    Url = i.Key,
-                    Count = i.Count()
-                })
-                .ToList();
+                    Url = b.Url,
+                    Count = (int)b.BookmarkCount
+                }).ToList();
+
                 return bookmarks;
+
             }
             else
             {
